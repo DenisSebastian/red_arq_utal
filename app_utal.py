@@ -99,7 +99,8 @@ def gs_gdf(sheet_name="datos_base", excluded_emails=None):
 
     df = conn.read(worksheet=sheet_name)
     df = df[df['Coordenadas'].notna()]
-    df = df[df['Coordenadas'] != '#ERROR!']
+    #df = df[df['Coordenadas'] != '#ERROR!']
+    df = df[~df['Coordenadas'].str.startswith('#ERROR!')]
     df = remove_duplicates_keep_latest(df = df)
     df[['Latitude', 'Longitude']] = df['Coordenadas'].str.split(',', expand=True)
 
