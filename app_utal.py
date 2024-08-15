@@ -68,7 +68,7 @@ def read_csv(csv_path):
     df = pd.read_csv(csv_path)
     return df 
 
-def remove_duplicates_keep_latest(df, email_col = "Dirección de correo electrónico", date_col = "Marca temporal"):
+def remove_email_duplicates_keep_latest(df, email_col = "Dirección de correo electrónico", date_col = "Marca temporal"):
     """
     Remove duplicate entries in the dataframe based on email, keeping the latest entry based on the date column.
     
@@ -91,6 +91,30 @@ def remove_duplicates_keep_latest(df, email_col = "Dirección de correo electró
     
     return df_unique
 
+def remove_name_duplicates_keep_latest(df, name_col='Nombre', surname1_col='Apellido1', surname2_col='Apellido2', date_col='Marca temporal'):
+    """
+    Remove duplicate entries in the dataframe based on name and surnames, keeping the latest entry based on the date column.
+    
+    Parameters:
+    - df: pandas DataFrame containing the data.
+    - name_col: str, name of the column containing the first name.
+    - surname1_col: str, name of the column containing the first surname.
+    - surname2_col: str, name of the column containing the second surname.
+    - date_col: str, name of the column containing the registration dates.
+    
+    Returns:
+    - A pandas DataFrame with duplicates removed, keeping the latest entry based on the date column.
+    """
+    # Convert date column to datetime if it's not already
+    df[date_col] = pd.to_datetime(df[date_col])
+    
+    # Sort the dataframe by name, surname1, surname2 and date, keeping the latest date last
+    df_sorted = df.sort_values(by=[name_col, surname1_col, surname2_col, date_col], ascending=[True, True, True, False])
+    
+    # Drop duplicates, keeping the first occurrence (which is the latest date due to sorting)
+    df_unique = df_sorted.drop_duplicates(subset=[name_col, surname1_col, surname2_col], keep='first')
+    
+    return df_unique
 
 @st.cache_data
 def gs_gdf(sheet_name="datos_base", excluded_emails=None):
@@ -99,19 +123,10 @@ def gs_gdf(sheet_name="datos_base", excluded_emails=None):
 
     df = conn.read(worksheet=sheet_name)
     df = df[df['Coordenadas'].notna()]
-    #df = df[df['Coordenadas'] != '#ERROR!']
     df = df[~df['Coordenadas'].str.startswith('#ERROR!')]
-    df = remove_duplicates_keep_latest(df = df)
+    #df = remove_email_duplicates_keep_latest(df = df)
+    df = remove_name_duplicates_keep_latest(df = df, name_col="NOMBRE ", surname1_col="APELLIDO PATERNO", surname2_col="APELLIDO MATERNO", date_col="Marca temporal")
     df[['Latitude', 'Longitude']] = df['Coordenadas'].str.split(',', expand=True)
-
-    # Split coordinates into two columns safely
-    # coordinates_split = df['Coordenadas'].str.split(',', expand=True)
-    
-    # if coordinates_split.shape[1] == 2:
-    #     df[['Latitude', 'Longitude']] = coordinates_split
-    # else:
-    #     st.error("Error: Coordinates column does not contain valid latitude and longitude data.")
-    #     return None
 
     # Convertir las columnas de latitud y longitud a float
     df['Latitude'] = pd.to_numeric(df['Latitude'], errors='coerce')
