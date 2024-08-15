@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+originales/*
+originales
+originales/dataraw.csv
+.streamlit/secrets.toml
+
+.DS_Store
+*/.DS_Store
