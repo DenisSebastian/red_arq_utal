@@ -12,7 +12,7 @@ from st_aggrid import AgGrid, GridOptionsBuilder
 from streamlit_gsheets import GSheetsConnection
 
 # variables
-APP_TITLE = 'VISOR RED ALUMNI ARQ UTALCA'
+APP_TITLE = 'PLATAFORMA RED ALUMNI ARQ UTALCA'
 APP_SUB_TITLE = 'Red de Ex-alumnos'
 name_comunas = "data/INE/comunas_nac.geojson"
 name_zonas = "data/INE/zonas_nac.geojson"
@@ -459,7 +459,7 @@ def get_max_com(df_com, reg_selected,  vals_col = "Cantidad", id_col = "NOM_COMU
 
 def make_metrics(list_val):
     nom_com = str(list_val[0])
-    n_com = str(list_val[1]) + " pers."
+    n_com = str(list_val[1]) + " Alumni"
     n_perc = str(round(list_val[2], 2)) + " %"
     st_metric = st.metric(nom_com, n_com, n_perc)
     return st_metric
