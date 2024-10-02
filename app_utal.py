@@ -124,6 +124,7 @@ def gs_gdf(sheet_name="DATOS_PLATAFORMA", excluded_emails=None):
     df = conn.read(worksheet=sheet_name)
     df = df[df['Coordenadas'].notna()]
     df = df[~df['Coordenadas'].str.startswith('#ERROR!')]
+    df = df[~df['Coordenadas'].str.startswith('Dirección vacía')]
     #df = remove_email_duplicates_keep_latest(df = df)
     df = remove_name_duplicates_keep_latest(df = df, name_col="NOMBRE ", surname1_col="APELLIDO PATERNO", surname2_col="APELLIDO MATERNO", date_col="Marca temporal")
     df[['Latitude', 'Longitude']] = df['Coordenadas'].str.split(',', expand=True)
