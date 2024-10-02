@@ -117,7 +117,7 @@ def remove_name_duplicates_keep_latest(df, name_col='Nombre', surname1_col='Apel
     return df_unique
 
 @st.cache_data
-def gs_gdf(sheet_name="datos_base", excluded_emails=None):
+def gs_gdf(sheet_name="DATOS_PLATAFORMA", excluded_emails=None):
     if excluded_emails is None:
         excluded_emails = []
 
