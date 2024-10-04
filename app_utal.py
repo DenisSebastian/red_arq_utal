@@ -37,7 +37,7 @@ excluded_emails = ["denisberroeta@gmail.com",
                    "jorgetroncosoastudillo@gmail.com"]
 
 var_count = "Ex-Alumnos"
-sheet_name = "datos_base"
+sheet_name = "DATOS_PLATAFORMA"
 
 # Configuración de la página
 st.set_page_config(
@@ -155,7 +155,7 @@ def read_geojson(geojson_path):
     return(gpd_file)
 
 @st.cache_data
-def read_and_count(geojson_path, sheet_name="datos_base", name_count="Cantidad", excluded_emails=None):
+def read_and_count(geojson_path, sheet_name="DATOS_PLATAFORMA", name_count="Cantidad", excluded_emails=None):
     gdf_polygons = read_geojson(geojson_path)
     gdf_points = gs_gdf(sheet_name=sheet_name, excluded_emails=excluded_emails)
     if gdf_points is None:
