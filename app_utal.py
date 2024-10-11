@@ -4,6 +4,8 @@ import streamlit as st
 import geopandas as gpd
 import pandas as pd
 import numpy as np
+#import folium
+#from folium import st_folium
 from streamlit_option_menu import option_menu
 import altair as alt
 import plotly.express as px
@@ -31,6 +33,7 @@ col_names = [
 "ESTADO",
 "INSTITUCIÓN",
 "CARGO",
+"LINKEDIN, WEB O INSTAGRAM"
 ]
 excluded_emails = ["denisberroeta@gmail.com", 
                    "coke_troncoso@hotmail.com",
@@ -503,8 +506,9 @@ def make_donut(input_response, input_text, input_color):
                       legend=None),
   ).properties(width=130, height=130)
     
-  text = plot.mark_text(align='center', color="#29b5e8", font="Lato", fontSize=25, fontWeight=700,
-                        fontStyle="italic").encode(text=alt.value(f'{input_response} %'))
+  text = plot.mark_text(align='center', color="#29b5e8",  fontSize=25, 
+                        #font="Lato", fontStyle="italic",
+                        fontWeight=700).encode(text=alt.value(f'{input_response} %'))
   plot_bg = alt.Chart(source_bg).mark_arc(innerRadius=45, cornerRadius=20).encode(
       theta="% value",
       color= alt.Color("Topic:N",
@@ -562,19 +566,31 @@ def main():
                          show_no_coords = show_no_coords)
     
     #Display Metrics
-    st.caption(f'Region: {reg_selected}, Comuna: {com_selected}')
+    #st.caption(f'Region: {reg_selected}, Comuna: {com_selected}')
     
-    col1, col2, col3 = st.columns((1, 5, 2), gap = "medium")
+    col1, col2 = st.columns((1.5, 6.5), gap = "medium")
     with col1:
-        st.markdown("**Datos**")
-        data1, data2, data3 = get_max_com(df_com= gdf_comunas, reg_selected = reg_selected,
-                                          vals_col = var_count, id_col = "NOM_COMUNA")
+        #st.markdown("**Datos**")
+        #data1, data2, data3 = get_max_com(df_com= gdf_comunas, reg_selected = reg_selected,
+         #                                 vals_col = var_count, id_col = "NOM_COMUNA")
 
-        st.write("% Regional")
+        st.write("Cantidad Total")    
+        st.write("% del Total")
         percent_reg = get_max_reg(df_com= gdf_comunas, reg_selected = reg_selected,
                                   vals_col = var_count) 
         donut_chart_greater = make_donut(percent_reg, 'Respecto al País', 'blue')
         st.altair_chart(donut_chart_greater)
+
+        tabBar = tab_bars(df_com = gdf_comunas, reg_selected = reg_selected, 
+                        cols_2 = ["NOM_COMUNA", var_count], var_count = var_count )
+
+        with st.expander('About', expanded=True):
+          st.write('''
+              [:blue[**Esc. de Arquitectura UTAL**]](http://www.arquitectura.utalca.cl/)
+              ''')
+          st.write('''
+              Actualiza o Completa tus datos [:blue[**Acá**]](https://docs.google.com/forms/d/e/1FAIpQLSfxV-AN-mMZklLF-v64truNddbOJCNN-TWxhoB4FgjUUCwGMA/viewform)
+              ''')
  
 
     with col2:
@@ -583,19 +599,19 @@ def main():
         st_map = express_mapbox(gdf_filtered = gdf_filtered, var_col = var_count)
 
         st.markdown("**Tabla de Datos**")
-        tab = table_info(df = df_table, drop_cols = drop_cols, name_col = "NOM_COMUNA")
+        tab = table_info(df = df_table, drop_cols = drop_cols, name_col = "NOM_COMUNA", h = 280)
         
    
-    with col3:
-      st.markdown("**Informaciones**")
-      tabBar = tab_bars(df_com = gdf_comunas, reg_selected = reg_selected, 
-                        cols_2 = ["NOM_COMUNA", var_count], var_count = var_count )
+    #with col3:
+ #     st.markdown("**Informaciones**")
+  #    tabBar = tab_bars(df_com = gdf_comunas, reg_selected = reg_selected, 
+   #                     cols_2 = ["NOM_COMUNA", var_count], var_count = var_count )
 
-      with st.expander('About', expanded=True):
-          st.write('''
-              - [:blue[**Esc. de Arquitectura UTAL**]](http://www.arquitectura.utalca.cl/)
-              - [:blue[**Link de la Encuesta**]](https://miro.com/app/board/uXjVNDBK62g=/)
-              ''')
+    #  with st.expander('About', expanded=True):
+     #     st.write('''
+      #        - [:blue[**Esc. de Arquitectura UTAL**]](http://www.arquitectura.utalca.cl/)
+        #      - [:blue[**Link de la Encuesta**]](https://docs.google.com/forms/d/e/1FAIpQLSfxV-AN-mMZklLF-v64truNddbOJCNN-TWxhoB4FgjUUCwGMA/viewform)
+       #       ''')
 
 if __name__ == "__main__":
     main()
